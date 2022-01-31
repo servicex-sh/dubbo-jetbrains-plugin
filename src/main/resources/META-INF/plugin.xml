@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>org.mvnsearch.jetbrains.plugins.dubbo-jetbrains-plugin</id>
+    <name>Dubbo Requests In HTTP Client</name>
+    <category>Microservices</category>
+    <vendor email="libing.chen@gmail.com">linux_china</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <!--    <depends optional="true" config-file="dubbo-withJava.xml">com.intellij.java</depends>-->
+    <!--suppress PluginXmlValidity -->
+    <dependencies>
+        <plugin id="com.jetbrains.restClient"/>
+    </dependencies>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="org.jetbrains.plugins.dubbo.requests.DubboRequestManager"/>
+        <httpClient.RequestExecutionSupport implementation="org.jetbrains.plugins.dubbo.restClient.execution.DubboRequestExecutionSupport"/>
+        <defaultLiveTemplates file="/liveTemplates/Dubbo.xml"/>
+        <!--        <lang.directNavigationProvider implementation="org.jetbrains.plugins.dubbo.navigation.DubboRoutingNavigation"/>-->
+    </extensions>
+
+</idea-plugin>
