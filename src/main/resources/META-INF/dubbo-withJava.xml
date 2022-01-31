@@ -1,0 +1,9 @@
+<idea-plugin>
+    <depends>org.jetbrains.kotlin</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <completion.contributor language="HTTP Request" implementationClass="org.jetbrains.plugins.dubbo.completion.DubboRoutingCompletionContributor"/>
+        <fileBasedIndex implementation="org.jetbrains.plugins.dubbo.file.DubboServiceFileIndex"/>
+        <!-- <lang.directNavigationProvider implementation="dev.jbang.idea.navigation.ScriptRefNavigation"/>-->
+        <microservices.endpointsProvider implementation="org.jetbrains.plugins.dubbo.endpoints.DubboServiceEndpointProvider"/>
+    </extensions>
+</idea-plugin>
