@@ -11,6 +11,7 @@ import java.net.URI
 class DubboRequest(override val URL: String?, override val httpMethod: String?, override val textToSend: String?, val headers: Map<String, String>?) : CommonClientRequest {
     val dubboURI: URI
     val serviceName: String
+    var serviceVersion = "0.0.0"
     val methodName: String
     val paramsTypeArray: Array<String>
     val arguments: Array<Any>
@@ -34,7 +35,11 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
             dubboURI.port
         }
         serviceName = dubboURI.path.substring(1)
-        val methodSignature = dubboURI.queryParameters["method"]!!
+        val queryParameters = dubboURI.queryParameters
+        if (queryParameters.contains("version")) {
+            this.serviceVersion = queryParameters["version"]!!
+        }
+        val methodSignature = queryParameters["method"]!!
         if (methodSignature.contains("(")) {
             methodName = methodSignature.substring(0, methodSignature.indexOf('('))
             val paramTypes = methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'))
