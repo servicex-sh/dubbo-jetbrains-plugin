@@ -42,9 +42,9 @@ class DubboClientResponse(
     override val presentationHeader: String
         get() {
             return if (status == "OK") {
-                "Dubbo/2.0 200 OK\n"
+                "Dubbo/2.0.2 200 OK\n"
             } else {
-                "Dubbo/2.0 ERROR\n${(error ?: "")}\n"
+                "Dubbo/2.0.2 ERROR\n${(error ?: "")}\n"
             }
         }
 
