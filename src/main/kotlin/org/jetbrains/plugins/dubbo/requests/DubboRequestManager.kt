@@ -38,6 +38,7 @@ class DubboRequestManager(private val project: Project) : Disposable {
                 val output: OutputStream = clientSocket.getOutputStream()
                 output.write(headerBytes)
                 output.write(contentBytes)
+                output.flush()
                 val inputStream: InputStream = clientSocket.getInputStream()
                 val data: ByteArray = extractData(inputStream)
                 val input: Hessian2Input = HessianSerializerInput(ByteArrayInputStream(data))
