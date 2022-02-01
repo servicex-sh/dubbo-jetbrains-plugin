@@ -27,8 +27,11 @@ class DubboRequestManager(private val project: Project) : Disposable {
         try {
             Socket(dubboUri.host, dubboRequest.port).use { clientSocket ->
                 val invocation = DubboRpcInvocation(
-                    dubboRequest.serviceName, dubboRequest.methodName,
-                    dubboRequest.paramsTypeArray, dubboRequest.arguments
+                    dubboRequest.serviceName,
+                    dubboRequest.serviceVersion,
+                    dubboRequest.methodName,
+                    dubboRequest.paramsTypeArray,
+                    dubboRequest.arguments
                 )
                 val contentBytes = invocation.toBytes()
                 val headerBytes = invocation.frameHeaderBytes(0L, contentBytes.size)
