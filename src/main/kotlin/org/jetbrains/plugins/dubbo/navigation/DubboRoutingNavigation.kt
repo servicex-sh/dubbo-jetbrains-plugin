@@ -16,37 +16,43 @@ import org.jetbrains.plugins.dubbo.psi.extractFirstClassFromJavaOrKt
 class DubboRoutingNavigation : DirectNavigationProvider {
     override fun getNavigationElement(element: PsiElement): PsiElement? {
         if (dubboRoutingCapture.accepts(element)) {
+            val highLightText = element.text
             val httpRequestTarget = element.parentOfType<HttpRequestTarget>()!!
             val httpRequest = httpRequestTarget.parentOfType<HttpRequest>()
             if (httpRequest != null && httpRequest.httpMethod == "DUBBO") {
                 val requestTarget = httpRequestTarget.text
                 if (requestTarget.isNotEmpty()) {
                     val routing = extractServiceAndMethodSignature(requestTarget)
-                    if (routing.isNotEmpty() && routing.contains('/')) {
-                        val parts = routing.split('/')
-                        val serviceName = parts[0];
-                        val methodSignature = parts[1]
-                        DubboServiceFileIndex.findDubboServiceFiles(element.project).forEach { psiFile ->
-                            val psiJavaClass = extractFirstClassFromJavaOrKt(psiFile)
-                            if (psiJavaClass != null) {
-                                val isDubboService = psiJavaClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
-                                if (isDubboService) {
-                                    val dubboService = extractDubboService(psiJavaClass)
-                                    val serviceFullName = dubboService.serviceName
-                                    if (serviceName == serviceFullName) {
-                                        psiJavaClass
-                                            .methods
-                                            .forEach { psiMethod ->
-                                                if (methodSignature.startsWith(psiMethod.name + "(")) {
-                                                    val paramTypes = psiMethod.parameterList.parameters
-                                                        .joinToString(",", "(", ")") { param ->
-                                                            (param.type as PsiClassReferenceType).canonicalText
+                    if (routing.contains(highLightText)) {
+                        if (routing.isNotEmpty() && routing.contains('/')) {
+                            val parts = routing.split('/')
+                            val serviceName = parts[0];
+                            val methodSignature = parts[1]
+                            DubboServiceFileIndex.findDubboServiceFiles(element.project).forEach { psiFile ->
+                                val psiJavaClass = extractFirstClassFromJavaOrKt(psiFile)
+                                if (psiJavaClass != null) {
+                                    val isDubboService = psiJavaClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
+                                    if (isDubboService) {
+                                        val dubboService = extractDubboService(psiJavaClass)
+                                        val serviceFullName = dubboService.serviceName
+                                        if (serviceName == serviceFullName) {
+                                            if (highLightText == serviceFullName) { //navigator to class impl
+                                                return psiJavaClass
+                                            }
+                                            psiJavaClass
+                                                .methods
+                                                .forEach { psiMethod ->
+                                                    if (methodSignature.startsWith(psiMethod.name + "(")) {
+                                                        val paramTypes = psiMethod.parameterList.parameters
+                                                            .joinToString(",", "(", ")") { param ->
+                                                                (param.type as PsiClassReferenceType).canonicalText
+                                                            }
+                                                        if (methodSignature == "${psiMethod.name}${paramTypes}") {
+                                                            return psiMethod
                                                         }
-                                                    if (methodSignature == "${psiMethod.name}${paramTypes}") {
-                                                        return psiMethod
                                                     }
                                                 }
-                                            }
+                                        }
                                     }
                                 }
                             }
