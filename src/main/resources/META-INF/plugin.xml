@@ -7,7 +7,7 @@
     <vendor email="libing.chen@gmail.com">linux_china</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-    <!--    <depends optional="true" config-file="dubbo-withJava.xml">com.intellij.java</depends>-->
+    <depends optional="true" config-file="dubbo-withJava.xml">com.intellij.java</depends>
     <!--suppress PluginXmlValidity -->
     <dependencies>
         <plugin id="com.jetbrains.restClient"/>
@@ -17,7 +17,6 @@
         <projectService serviceImplementation="org.jetbrains.plugins.dubbo.requests.DubboRequestManager"/>
         <httpClient.RequestExecutionSupport implementation="org.jetbrains.plugins.dubbo.restClient.execution.DubboRequestExecutionSupport"/>
         <defaultLiveTemplates file="/liveTemplates/Dubbo.xml"/>
-        <!--        <lang.directNavigationProvider implementation="org.jetbrains.plugins.dubbo.navigation.DubboRoutingNavigation"/>-->
     </extensions>
 
 </idea-plugin>
