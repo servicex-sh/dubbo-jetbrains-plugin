@@ -1,8 +1,10 @@
 package org.jetbrains.plugins.dubbo.navigation
 
+import com.intellij.httpClient.http.request.psi.HttpRequest
 import com.intellij.httpClient.http.request.psi.HttpRequestTarget
 import com.intellij.navigation.DirectNavigationProvider
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.plugins.dubbo.completion.DubboRoutingCompletionContributor.Companion.dubboRoutingCapture
 import org.jetbrains.plugins.dubbo.file.DubboServiceFileIndex
@@ -15,32 +17,37 @@ class DubboRoutingNavigation : DirectNavigationProvider {
     override fun getNavigationElement(element: PsiElement): PsiElement? {
         if (dubboRoutingCapture.accepts(element)) {
             val httpRequestTarget = element.parentOfType<HttpRequestTarget>()!!
-            val host = httpRequestTarget.host
-            val pathAbsolute = httpRequestTarget.pathAbsolute
-            if (host != null || pathAbsolute != null) {
-                val rsocketRouting = if (pathAbsolute != null) {
-                    val path = pathAbsolute.text
-                    path.substring(path.lastIndexOf('/') + 1)
-                } else {
-                    host!!.text
-                }
-                if (rsocketRouting.isNotEmpty()) {
-                    DubboServiceFileIndex.findDubboServiceFiles(element.project).forEach { psiFile ->
-                        val psiJavaClass = extractFirstClassFromJavaOrKt(psiFile)
-                        if (psiJavaClass != null) {
-                            val isDubboService = psiJavaClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
-                            if (isDubboService) {
-                                val dubboService = extractDubboService(psiJavaClass)
-                                val serviceFullName = dubboService.serviceName
-                                if (rsocketRouting.startsWith(serviceFullName)) {
-                                    dubboService.serviceInterface
-                                        .methods
-                                        .forEach {
-                                            val routingKey = "${serviceFullName}.${it.name}"
-                                            if (routingKey == rsocketRouting) {
-                                                return it
+            val httpRequest = httpRequestTarget.parentOfType<HttpRequest>()
+            if (httpRequest != null && httpRequest.httpMethod == "DUBBO") {
+                val requestTarget = httpRequestTarget.text
+                if (requestTarget.isNotEmpty()) {
+                    val routing = extractServiceAndMethodSignature(requestTarget)
+                    if (routing.isNotEmpty() && routing.contains('/')) {
+                        val parts = routing.split('/')
+                        val serviceName = parts[0];
+                        val methodSignature = parts[1]
+                        DubboServiceFileIndex.findDubboServiceFiles(element.project).forEach { psiFile ->
+                            val psiJavaClass = extractFirstClassFromJavaOrKt(psiFile)
+                            if (psiJavaClass != null) {
+                                val isDubboService = psiJavaClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
+                                if (isDubboService) {
+                                    val dubboService = extractDubboService(psiJavaClass)
+                                    val serviceFullName = dubboService.serviceName
+                                    if (serviceName == serviceFullName) {
+                                        psiJavaClass
+                                            .methods
+                                            .forEach { psiMethod ->
+                                                if (methodSignature.startsWith(psiMethod.name + "(")) {
+                                                    val paramTypes = psiMethod.parameterList.parameters
+                                                        .joinToString(",", "(", ")") { param ->
+                                                            (param.type as PsiClassReferenceType).canonicalText
+                                                        }
+                                                    if (methodSignature == "${psiMethod.name}${paramTypes}") {
+                                                        return psiMethod
+                                                    }
+                                                }
                                             }
-                                        }
+                                    }
                                 }
                             }
                         }
@@ -49,5 +56,25 @@ class DubboRoutingNavigation : DirectNavigationProvider {
             }
         }
         return null
+    }
+
+    fun extractServiceAndMethodSignature(requestTarget: String): String {
+        var routing = requestTarget;
+        if (routing.startsWith("dubbo://")) {
+            val offset = routing.indexOf('/', 8)
+            if (offset > 1) {
+                routing = routing.substring(offset + 1)
+            } else {
+                routing = ""
+            }
+        } else if (routing.startsWith("/")) { // "/xxx"
+            routing = routing.substring(1);
+        } else if (routing.contains(":") && routing.contains('/')) { // "localhost:20880/xxx"
+            routing = routing.substring(routing.indexOf('/') + 1)
+        }
+        if (routing.contains('?')) {
+            routing = routing.substring(0, routing.indexOf('?'))
+        }
+        return routing
     }
 }
