@@ -25,6 +25,9 @@ class DubboRequestConverter : RequestConverter<DubboRequest>() {
             if (!url.contains('?') && requestTargetText.contains("?")) {
                 url += requestTargetText.substring(requestTargetText.indexOf('?'))
             }
+            if (url.startsWith("http://")) { //compatible mode
+                url = url.replace("http://", "dubbo://")
+            }
             if (!url.startsWith("dubbo://") && url.contains(":")) {
                 url = "dubbo://${url}"
             }
