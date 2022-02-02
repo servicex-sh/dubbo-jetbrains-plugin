@@ -41,9 +41,12 @@ fun extractDubboService(serviceImpPsiClass: PsiClass): DubboService {
             serviceFullName = serviceInterfaceClassName
         }
     }
-    val serviceName = dubboServiceAnnotation.findAttributeValue("interfaceName")
-    if (serviceName != null && serviceName.text.trim('"').isNotEmpty()) {
-        serviceFullName = serviceName.text.trim('"')
+    val interfaceName = dubboServiceAnnotation.findAttributeValue("interfaceName")
+    if (interfaceName != null) {
+        val temp = interfaceName.text.trim('"')
+        if (temp.isNotEmpty() && temp != "void") {
+            serviceFullName = temp;
+        }
     }
     return DubboService(serviceFullName, serviceInterfacePsiClass)
 }
