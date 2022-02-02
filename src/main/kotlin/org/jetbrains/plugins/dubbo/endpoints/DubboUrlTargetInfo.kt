@@ -13,7 +13,7 @@ class DubboUrlTargetInfo(private val element: PsiElement, private val routing: S
     override val path: UrlPath
         get() = UrlPath.fromExactString(routing)
     override val schemes: List<String>
-        get() = listOf("dubbo", "tcp")
+        get() = listOf()
 
     override fun resolveToPsiElement() = element
 
