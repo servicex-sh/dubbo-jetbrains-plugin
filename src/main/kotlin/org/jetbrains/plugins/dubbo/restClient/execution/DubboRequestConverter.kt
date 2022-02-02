@@ -36,7 +36,12 @@ class DubboRequestConverter : RequestConverter<DubboRequest>() {
     }
 
     override fun toExternalFormInner(request: DubboRequest, fileName: String?): String {
-        return ""
+        val builder = StringBuilder()
+        builder.append("### dubbo request").append("\n")
+        builder.append("RSOCKET ${request.dubboURI}").append("\n")
+        builder.append("\n");
+        builder.append(request.textToSend ?: "")
+        return builder.toString()
     }
 
 }
