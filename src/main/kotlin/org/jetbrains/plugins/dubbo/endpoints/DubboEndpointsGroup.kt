@@ -2,6 +2,7 @@ package org.jetbrains.plugins.dubbo.endpoints
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.plugins.dubbo.psi.extractDubboService
 import org.jetbrains.plugins.dubbo.psi.extractFirstClassFromJavaOrKt
 
@@ -19,8 +20,12 @@ class DubboEndpointsGroup(private val project: Project, private val psiFile: Psi
                     .filter {
                         serviceInterfaceMethods.contains(it.name)
                     }
-                    .map {
-                        DubboEndpoint("${dubboService.serviceName}.${it.name}", it)
+                    .map { psiMethod ->
+                        val paramTypes = psiMethod.parameterList.parameters
+                            .joinToString(",", "(", ")") { param ->
+                                (param.type as PsiClassReferenceType).canonicalText
+                            }
+                        DubboEndpoint("${dubboService.serviceName}/${psiMethod}${paramTypes}", psiMethod)
                     }.forEach {
                         endpoints.add(it)
                     }
