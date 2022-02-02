@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.plugins.dubbo.completion.DubboRoutingCompletionContributor.Companion.dubboRoutingCapture
+import org.jetbrains.plugins.dubbo.dubboServiceAnnotationName
 import org.jetbrains.plugins.dubbo.file.DubboServiceFileIndex
 import org.jetbrains.plugins.dubbo.psi.extractDubboService
 import org.jetbrains.plugins.dubbo.psi.extractFirstClassFromJavaOrKt
@@ -31,7 +32,7 @@ class DubboRoutingNavigation : DirectNavigationProvider {
                             DubboServiceFileIndex.findDubboServiceFiles(element.project).forEach { psiFile ->
                                 val psiJavaClass = extractFirstClassFromJavaOrKt(psiFile)
                                 if (psiJavaClass != null) {
-                                    val isDubboService = psiJavaClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
+                                    val isDubboService = psiJavaClass.hasAnnotation(dubboServiceAnnotationName)
                                     if (isDubboService) {
                                         val dubboService = extractDubboService(psiJavaClass)
                                         val serviceFullName = dubboService.serviceName

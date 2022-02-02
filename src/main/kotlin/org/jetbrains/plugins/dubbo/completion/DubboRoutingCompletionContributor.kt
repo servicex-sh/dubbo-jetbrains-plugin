@@ -16,6 +16,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.plugins.dubbo.dubboIcon
+import org.jetbrains.plugins.dubbo.dubboServiceAnnotationName
 import org.jetbrains.plugins.dubbo.file.DubboServiceFileIndex
 import org.jetbrains.plugins.dubbo.psi.extractDubboService
 import org.jetbrains.plugins.dubbo.psi.extractFirstClassFromJavaOrKt
@@ -62,7 +63,7 @@ class DubboRoutingCompletionContributor : CompletionContributor() {
                 DubboServiceFileIndex.findDubboServiceFiles(httpRequest.project).forEach { psiFile ->
                     val psiJavaClass = extractFirstClassFromJavaOrKt(psiFile)
                     if (psiJavaClass != null) {
-                        val dubboServiceAnnotation = psiJavaClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
+                        val dubboServiceAnnotation = psiJavaClass.hasAnnotation(dubboServiceAnnotationName)
                         if (dubboServiceAnnotation) {
                             val dubboServiceInterface = extractDubboService(psiJavaClass)
                             val serviceFullName = dubboServiceInterface.serviceName

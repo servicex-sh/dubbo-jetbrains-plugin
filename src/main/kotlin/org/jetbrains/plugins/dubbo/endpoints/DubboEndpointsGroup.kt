@@ -3,6 +3,7 @@ package org.jetbrains.plugins.dubbo.endpoints
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.PsiClassReferenceType
+import org.jetbrains.plugins.dubbo.dubboServiceAnnotationName
 import org.jetbrains.plugins.dubbo.psi.extractDubboService
 import org.jetbrains.plugins.dubbo.psi.extractFirstClassFromJavaOrKt
 
@@ -12,7 +13,7 @@ class DubboEndpointsGroup(private val project: Project, private val psiFile: Psi
         val endpoints = mutableListOf<DubboEndpoint>()
         val psiClass = extractFirstClassFromJavaOrKt(psiFile)
         if (psiClass != null) {
-            val isDubboService = psiClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
+            val isDubboService = psiClass.hasAnnotation(dubboServiceAnnotationName)
             if (isDubboService) {
                 val dubboService = extractDubboService(psiClass)
                 val serviceInterfaceMethods = dubboService.serviceInterface.methods.map { it.name }.toList()
