@@ -10,7 +10,7 @@ import java.net.URI
 @Suppress("UnstableApiUsage")
 class DubboRequest(override val URL: String?, override val httpMethod: String?, override val textToSend: String?, val headers: Map<String, String>?) : CommonClientRequest {
     val dubboURI: URI
-    val serviceName: String
+    var serviceName: String
     var serviceVersion = "0.0.0"
     val methodName: String
     val paramsTypeArray: Array<String>
@@ -34,13 +34,19 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
         } else {
             dubboURI.port
         }
-        serviceName = dubboURI.path.substring(1)
+
         val queryParameters = dubboURI.queryParameters
         if (queryParameters.contains("version")) {
             this.serviceVersion = queryParameters["version"]!!
         }
-        val methodSignature = queryParameters["method"]!!
-        if (methodSignature.contains("(")) {
+        var methodSignature = queryParameters["method"]
+        serviceName = dubboURI.path.substring(1)
+        if (serviceName.contains('/')) {
+            val parts = serviceName.split('/')
+            serviceName = parts[0]
+            methodSignature = parts[1]
+        }
+        if (methodSignature!!.contains("(")) {
             methodName = methodSignature.substring(0, methodSignature.indexOf('('))
             val paramTypes = methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'))
             if (paramTypes.isNotEmpty()) {
