@@ -3,6 +3,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <completion.contributor language="HTTP Request" implementationClass="org.jetbrains.plugins.dubbo.completion.DubboRoutingCompletionContributor"/>
         <fileBasedIndex implementation="org.jetbrains.plugins.dubbo.file.DubboServiceFileIndex"/>
+        <fileBasedIndex implementation="org.jetbrains.plugins.dubbo.file.DubboRoutingHttpIndex"/>
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.jetbrains.plugins.dubbo.psi.DubboRequestMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.plugins.dubbo.psi.DubboRequestMarkerProvider"/>
         <lang.directNavigationProvider implementation="org.jetbrains.plugins.dubbo.navigation.DubboRoutingNavigation"/>
         <microservices.endpointsProvider implementation="org.jetbrains.plugins.dubbo.endpoints.DubboServiceEndpointProvider"/>
     </extensions>
