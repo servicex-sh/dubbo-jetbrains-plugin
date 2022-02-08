@@ -6,7 +6,7 @@ Dubbo plugin for JetBrains IDEs
 
 The following features are available for Dubbo:
 
-* Dubbo Request
+* Dubbo direct request testing
 * Live templates: dubbo
 * Dubbo Endpoint support: Java and Kotlin
 * Code completion/navigation for DUBBO request
