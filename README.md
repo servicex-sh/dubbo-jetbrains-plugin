@@ -9,6 +9,8 @@ The following features are available for Dubbo:
 * Dubbo Request
 * Live templates: dubbo
 * Dubbo Endpoint support: Java and Kotlin
+* Code completion/navigation for DUBBO request
+* Line marker for Dubbo API with request in HTTP file
 
 <!-- Plugin description end -->
 
