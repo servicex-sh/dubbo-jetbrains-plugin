@@ -19,22 +19,13 @@ class DubboRequestConverter : RequestConverter<DubboRequest>() {
         var headers: Map<String, String>? = null
         ApplicationManager.getApplication().runReadAction {
             val httpRequest = requestPsiPointer.element!!
-            val requestTarget = httpRequest.requestTarget!!
-            val requestTargetText = requestTarget.text
-            url = httpRequest.getHttpUrl(substitutor)!!
-            if (!url.contains('?') && requestTargetText.contains("?")) {
-                url += requestTargetText.substring(requestTargetText.indexOf('?'))
-            }
-            if (url.startsWith("http://")) { //compatible mode
-                url = url.replace("http://", "dubbo://")
-            }
-            if (!url.startsWith("dubbo://") && url.contains(":")) {
-                url = "dubbo://${url}"
-            }
+            url = substitutor.getValue(httpRequest.requestTarget!!)
             headers = httpRequest.headerFieldList.associate { it.name to it.getValue(substitutor) }
             requestType = httpRequest.httpMethod
             requestBody = httpRequest.requestBody?.text
         }
+        val host = headers?.getOrDefault("Host", "localhost")!!
+        url = convertToDubboUrl(url, host)
         return DubboRequest(url, requestType, requestBody, headers)
     }
 
@@ -45,6 +36,25 @@ class DubboRequestConverter : RequestConverter<DubboRequest>() {
         builder.append("\n");
         builder.append(request.textToSend ?: "")
         return builder.toString()
+    }
+
+    private fun convertToDubboUrl(url: String, host: String): String {
+        var tempUri = url
+        if (!tempUri.contains("://")) { //without schema
+            if (tempUri.contains(":")) { //contains host
+                tempUri = "dubbo://${tempUri}"
+            } else { //path only
+                if (host.contains("://")) { //host with schema
+                    tempUri = "${host.trim('/')}/${url.trim('/')}"
+                } else {
+                    tempUri = "dubbo://$host/${url.trim('/')}"
+                }
+            }
+        }
+        if (!tempUri.startsWith("dubbo")) {
+            tempUri = tempUri.replace("http://", "dubbo://")
+        }
+        return tempUri
     }
 
 }
