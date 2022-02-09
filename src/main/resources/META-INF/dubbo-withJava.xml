@@ -8,5 +8,6 @@
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.plugins.dubbo.psi.DubboRequestMarkerProvider"/>
         <lang.directNavigationProvider implementation="org.jetbrains.plugins.dubbo.navigation.DubboRoutingNavigation"/>
         <microservices.endpointsProvider implementation="org.jetbrains.plugins.dubbo.endpoints.DubboServiceEndpointProvider"/>
+        <microservices.urlResolverFactory implementation="org.jetbrains.plugins.dubbo.restClient.url.DubboUrlResolverFactory"/>
     </extensions>
 </idea-plugin>
