@@ -25,7 +25,11 @@ class DubboRequestManager(private val project: Project) : Disposable {
         val dubboUri = dubboRequest.dubboURI
         var responseJsonBody = ""
         try {
-            Socket(dubboUri.host, dubboRequest.port).use { clientSocket ->
+            var port = dubboUri.port
+            if (port <= 0) {
+                port = 20880
+            }
+            Socket(dubboUri.host, port).use { clientSocket ->
                 val invocation = DubboRpcInvocation(
                     dubboRequest.serviceName,
                     dubboRequest.serviceVersion,
