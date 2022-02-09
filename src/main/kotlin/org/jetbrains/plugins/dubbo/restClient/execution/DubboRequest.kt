@@ -3,6 +3,7 @@ package org.jetbrains.plugins.dubbo.restClient.execution
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.httpClient.execution.common.CommonClientRequest
+import com.intellij.remoteDev.util.UrlParameterKeys.Companion.port
 import com.intellij.util.queryParameters
 import java.net.URI
 
@@ -15,26 +16,9 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
     val methodName: String
     val paramsTypeArray: Array<String>
     val arguments: Array<Any>
-    val port: Int
 
     init {
-        var tempUri = URL!!
-        if (headers != null && headers.contains("Host")) {
-            val host = headers["Host"]
-            if (URL.startsWith("/")) {
-                tempUri = "${host}${URL}"
-            }
-            if (!tempUri.startsWith("dubbo://")) {
-                tempUri = "dubbo://${tempUri}"
-            }
-        }
-        dubboURI = URI.create(tempUri)
-        port = if (dubboURI.port <= 0) {
-            20880
-        } else {
-            dubboURI.port
-        }
-
+        dubboURI = URI.create(URL)
         val queryParameters = dubboURI.queryParameters
         if (queryParameters.contains("version")) {
             this.serviceVersion = queryParameters["version"]!!
