@@ -12,6 +12,19 @@ The following features are available for Dubbo:
 * Code completion/navigation for DUBBO request
 * Line marker for Dubbo API with request in HTTP file
 
+Usage:
+
+* Create Apache Dubbo service from https://dubbo.apache.org/zh/docs/languages/java/java-specific/
+* Add following code to index.http then click run on the gutter to test Dubbo service
+
+```
+### Dubbo request
+DUBBO 127.0.0.1:20880/GreetingsService/sayHi(java.lang.String)
+Content-Type: application/json
+
+"Jackie"
+```
+
 <!-- Plugin description end -->
 
 # Dubbo request demo
