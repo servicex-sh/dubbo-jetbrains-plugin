@@ -7,7 +7,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.plugins.dubbo.file.DubboServiceFileIndex
 
-
+/**
+ *  dubbo:// schema resolve support
+ * <microservices.urlResolverFactory implementation="org.jetbrains.plugins.dubbo.restClient.url.DubboUrlResolverFactory"/>
+ */
 class DubboUrlResolverFactory : UrlResolverFactory {
     override fun forProject(project: Project): UrlResolver {
         return DubboUrlResolver(project)
