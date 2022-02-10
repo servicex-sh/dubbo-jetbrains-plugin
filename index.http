@@ -1,6 +1,8 @@
+#!/usr/bin/env httpx --httpfile
+
 ### Dubbbo request
 //@name sayHi
-Dubbo 127.0.0.1:20880/GreetingsService?method=sayHi(java.lang.String)
+DUBBO 127.0.0.1:20880/GreetingsService/sayHi(java.lang.String)
 Content-Type: application/json
 
 "Jackie"
