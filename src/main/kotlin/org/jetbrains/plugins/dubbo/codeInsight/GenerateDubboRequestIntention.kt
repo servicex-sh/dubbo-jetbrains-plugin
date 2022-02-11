@@ -44,7 +44,7 @@ class GenerateDubboRequestIntention : BaseElementAtCaretIntentionAction() {
                 if (params.size == 1) {
                     body = getDefaultValue(params[0])
                 } else {
-                    body = params.joinToString(",\n  ", "[\n", "\n]") { param ->
+                    body = params.joinToString(",\n  ", "[\n  ", "\n]") { param ->
                         getDefaultValue(param)
                     }
                 }
@@ -64,8 +64,12 @@ class GenerateDubboRequestIntention : BaseElementAtCaretIntentionAction() {
                 //insert code to index.http file
                 val indexHttpFile = PsiManager.getInstance(project).findFile(indexHttpVirtualFile)!!
                 val document = PsiDocumentManager.getInstance(project).getDocument(indexHttpFile)!!
-                val offset = document.getLineEndOffset(document.lineCount - 1)
-                // document.insertString(offset, builder.toString())
+                val offset = if(document.lineCount > 0)  {
+                    document.getLineEndOffset(document.lineCount - 1)
+                } else {
+                    0
+                }  
+                document.insertString(offset, builder.toString())
             }
         }
 
