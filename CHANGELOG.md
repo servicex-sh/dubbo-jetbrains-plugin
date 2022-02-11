@@ -5,6 +5,7 @@
 ## [0.2.0]
 
 - Added: Intention action to create DUBBO request from Dubbo Service class
+- Fixed: Remove 'dubbo://' from 'dubbo' live template
 
 ## [0.1.0]
 
