@@ -1,5 +1,5 @@
 <templateSet group="Dubbo">
-    <template name="dubbo" value="DUBBO 127.0.0.1:20880/GreetingsService?method=sayHi(java.lang.String)&#10;Content-Type: application/json&#10;&#10;1$END$"
+    <template name="dubbo" value="DUBBO 127.0.0.1:20880/GreetingsService?method=sayHi(java.lang.String)&#10;Content-Type: application/json&#10;&#10;&quot;dubbo&quot;$END$"
               description="Dubbo request" toReformat="false" toShortenFQNames="true">
         <context>
             <option name="REQUEST" value="true"/>
