@@ -1,9 +1,9 @@
 package org.jetbrains.plugins.dubbo.psi
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.plugins.dubbo.dubboServiceAnnotationName
 
 data class DubboService(val serviceName: String, val serviceInterface: PsiClass)
@@ -50,4 +50,18 @@ fun extractDubboService(serviceImpPsiClass: PsiClass): DubboService {
         }
     }
     return DubboService(serviceFullName, serviceInterfacePsiClass)
+}
+
+
+fun extractPsiMethod(element: PsiElement): PsiMethod? {
+    if (element is PsiMethod) {
+        return element
+    } else if (element is KtNamedFunction) {
+        val ktNamedFunction: KtNamedFunction = element
+        val lightMethods = ktNamedFunction.toLightMethods()
+        if (lightMethods.isNotEmpty()) {
+            return lightMethods[0]
+        }
+    }
+    return null
 }
