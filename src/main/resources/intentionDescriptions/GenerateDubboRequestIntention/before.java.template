@@ -1,0 +1,7 @@
+@DubboService(interfaceClass = AccountService.class)
+public class AccountServiceImpl implements AccountService {
+    @Override
+    public Account findById(Integer id) {
+        return new Account(id, "wayne_wildshb@column.ps");
+    }
+}
