@@ -2,6 +2,10 @@
 
 # RSocket plugin Changelog
 
+## [0.2.0]
+
+- Added: Intention action to create DUBBO request from Dubbo Service class
+
 ## [0.1.0]
 
 ### Added
