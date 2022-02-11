@@ -11,8 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.dubbo.dubboServiceAnnotationName
 import org.jetbrains.plugins.dubbo.file.DubboRoutingHttpIndex
@@ -21,16 +19,7 @@ import org.jetbrains.plugins.dubbo.file.DubboRoutingHttpIndex
 class DubboRequestMarkerProvider : RelatedItemLineMarkerProvider() {
 
     override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<*>>) {
-        var psiMethod: PsiMethod? = null;
-        if (element is PsiMethod) {
-            psiMethod = element
-        } else if (element is KtNamedFunction) {
-            val ktNamedFunction: KtNamedFunction = element
-            val lightMethods = ktNamedFunction.toLightMethods()
-            if (lightMethods.isNotEmpty()) {
-                psiMethod = lightMethods[0]
-            }
-        }
+        val psiMethod: PsiMethod? = extractPsiMethod(element)
         if (psiMethod != null) {
             val psiClass = psiMethod.parentOfType<PsiClass>()
             if (psiClass != null && psiClass.hasAnnotation(dubboServiceAnnotationName)) {
