@@ -1,0 +1,6 @@
+### Dubbbo request to find account by id
+//@name findAccountById
+DUBBO 127.0.0.1:20880/org.mvnsearch.AccountService/findById(java.lang.Integer)
+Content-Type: application/json
+
+1
