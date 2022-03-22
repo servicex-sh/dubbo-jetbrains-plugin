@@ -3,7 +3,6 @@ package org.jetbrains.plugins.dubbo.restClient.execution
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.httpClient.execution.common.CommonClientRequest
-import com.intellij.remoteDev.util.UrlParameterKeys.Companion.port
 import com.intellij.util.queryParameters
 import java.net.URI
 
@@ -17,8 +16,39 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
     val paramsTypeArray: Array<String>
     val arguments: Array<Any>
 
+    companion object {
+        private val shortTypeMapping = HashMap<String, String>().apply {
+            put("boolean", "java.lang.Boolean")
+            put("Boolean", "java.lang.Boolean")
+            put("Boolean[]", "java.lang.Boolean[]")
+            put("byte", "java.lang.Byte")
+            put("Byte", "java.lang.Byte")
+            put("Byte[]", "java.lang.Byte[]")
+            put("char", "java.lang.Char")
+            put("Char", "java.lang.Char")
+            put("Char[]", "java.lang.Char[]")
+            put("short", "java.lang.Short")
+            put("Short", "java.lang.Short")
+            put("Short[]", "java.lang.Short[]")
+            put("int", "java.lang.Integer")
+            put("Integer", "java.lang.Integer")
+            put("Integer[]", "java.lang.Integer[]")
+            put("long", "java.lang.Long")
+            put("Long", "java.lang.Long")
+            put("Long[]", "java.lang.Long[]")
+            put("float", "java.lang.Float")
+            put("Float", "java.lang.Float")
+            put("Float[]", "java.lang.Float[]")
+            put("double", "java.lang.Double")
+            put("Double", "java.lang.Double")
+            put("Double[]", "java.lang.Double[]")
+            put("String", "java.lang.String")
+            put("String[]", "java.lang.String[]")
+        }
+    }
+
     init {
-        dubboURI = URI.create(URL)
+        dubboURI = URI.create(URL!!)
         val queryParameters = dubboURI.queryParameters
         if (queryParameters.contains("version")) {
             this.serviceVersion = queryParameters["version"]!!
@@ -34,7 +64,7 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
             methodName = methodSignature.substring(0, methodSignature.indexOf('('))
             val paramTypes = methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'))
             if (paramTypes.isNotEmpty()) {
-                paramsTypeArray = paramTypes.split(",").map { it.trim() }.toTypedArray()
+                paramsTypeArray = paramTypes.split(",").map { shortTypeMapping.getOrDefault(it, it) }.toTypedArray()
             } else {
                 paramsTypeArray = arrayOf()
             }
