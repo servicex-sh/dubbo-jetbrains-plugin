@@ -2,6 +2,11 @@
 
 # RSocket plugin Changelog
 
+## [0.3.0]
+
+- Added: Support short type name, and you can use `/GreetingsService/sayHi(String)`
+- Short Types: primitive types, such as int, Integer ..., and String
+
 ## [0.2.0]
 
 - Added: Intention action to create DUBBO request from Dubbo Service class
