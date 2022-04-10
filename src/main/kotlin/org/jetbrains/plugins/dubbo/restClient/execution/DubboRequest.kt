@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.httpClient.execution.common.CommonClientRequest
 import com.intellij.util.queryParameters
+import org.apache.commons.lang.StringUtils
 import java.net.URI
 
 
@@ -78,17 +79,33 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
                 val objectMapper = ObjectMapper()
                 val jsonArray = objectMapper.readValue<List<Any>>(body)
                 arguments = jsonArray.map {
-                    if (it is String) {
+                    val textValue = if (it is String) {
                         it
                     } else {
                         objectMapper.writeValueAsString(it)
                     }
+                    convertToDoubleQuoteString(textValue)
                 }.toTypedArray()
             } else {
-                arguments = arrayOf(body.trim('"'))
+                arguments = if (body.startsWith('\"')) {
+                    arrayOf(body)
+                } else {
+                    arrayOf(convertToDoubleQuoteString(body))
+                }
             }
         } else {
             arguments = arrayOf()
+        }
+    }
+
+    private fun convertToDoubleQuoteString(text: String): String {
+        return if (!text.startsWith('\"')) {
+            var escapedText = StringUtils.replace(text, "\"", "\\\"")
+            escapedText = StringUtils.replace(escapedText, "\n", "\\n")
+            escapedText = StringUtils.replace(escapedText, "\r", "")
+            "\"${escapedText}\""
+        } else {
+            text
         }
     }
 
@@ -105,18 +122,14 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
         val contentType = headers.getOrDefault("Content-Type", "application/json")
         if (!contentType.contains("json")) {
             if (!newBody.startsWith('"')) {
-                newBody = "\"${newBody}\""
+                newBody = convertToDoubleQuoteString(newBody)
             }
         }
         val argLines = mutableListOf<String>()
         for (i in 0..argsHeaders.size) {
             val key = "x-args-$i"
             if (argsHeaders.containsKey(key)) {
-                var value = argsHeaders[key]!!
-                if (!value.startsWith('"')) {
-                    value = "\"${value}\""
-                    argLines.add(value)
-                }
+                argLines.add(convertToDoubleQuoteString(argsHeaders[key]!!))
             } else {
                 argLines.add(newBody)
             }
