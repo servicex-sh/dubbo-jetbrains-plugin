@@ -2,6 +2,21 @@
 
 # RSocket plugin Changelog
 
+## [0.4.0]
+
+- Fixed: add double quote for all text
+- Added: `X-Args-0`, `X-Args-1` introduced for param with language injection
+
+```
+### Dubbbo update description
+//@name updateDesc
+DUBBO 127.0.0.1:20880/GreetingsService/updateDesc(java.lang.Integer,java.lang.String)
+Content-Type: text/html
+X-Args-0: 1
+
+<div>Java Developer</div>
+```
+
 ## [0.3.0]
 
 - Added: Support short type name, and you can use `/GreetingsService/sayHi(String)`
