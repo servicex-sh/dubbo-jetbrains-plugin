@@ -5,8 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.httpClient.execution.common.CommonClientRequest
 import com.intellij.util.queryParameters
 import java.net.URI
-import java.util.*
-import kotlin.collections.HashMap
 
 
 @Suppress("UnstableApiUsage")
@@ -113,9 +111,17 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
         val argLines = mutableListOf<String>()
         for (i in 0..argsHeaders.size) {
             val key = "x-args-$i"
-            argLines.add(argsHeaders.getOrDefault(key, newBody))
+            if (argsHeaders.containsKey(key)) {
+                var value = argsHeaders[key]!!
+                if (!value.startsWith('"')) {
+                    value = "\"${value}\""
+                    argLines.add(value)
+                }
+            } else {
+                argLines.add(newBody)
+            }
         }
-        return "[" + java.lang.String.join(",", argLines) + "]"
+        return "[" + argLines.joinToString(",") + "]"
     }
 
 }
