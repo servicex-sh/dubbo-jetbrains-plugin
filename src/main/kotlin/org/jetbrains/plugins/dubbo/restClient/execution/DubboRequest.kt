@@ -5,6 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.httpClient.execution.common.CommonClientRequest
 import com.intellij.util.queryParameters
 import java.net.URI
+import java.util.*
+import kotlin.collections.HashMap
 
 
 @Suppress("UnstableApiUsage")
@@ -96,7 +98,7 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
      * merge X-Args-0 headers into json array body
      */
     private fun jsonArrayBodyWithArgsHeaders(): String {
-        val argsHeaders: Map<String, String> = headers.filter { it.key.toLowerCase().startsWith("x-args-") }
+        val argsHeaders: Map<String, String> = headers.filter { it.key.lowercase().startsWith("x-args-") }
             .mapKeys { it.key.lowercase() }
         if (argsHeaders.isEmpty()) {
             return textToSend ?: ""
