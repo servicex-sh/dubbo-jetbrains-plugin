@@ -16,7 +16,7 @@ class DubboRequestConverter : RequestConverter<DubboRequest>() {
         var url = ""
         var requestType = ""
         var requestBody: String? = null
-        var headers: Map<String, String>? = null
+        lateinit var headers: Map<String, String>
         ApplicationManager.getApplication().runReadAction {
             val httpRequest = requestPsiPointer.element!!
             url = substitutor.getValue(httpRequest.requestTarget!!)
@@ -24,7 +24,7 @@ class DubboRequestConverter : RequestConverter<DubboRequest>() {
             requestType = httpRequest.httpMethod
             requestBody = httpRequest.requestBody?.text
         }
-        val host = headers?.getOrDefault("Host", "localhost")!!
+        val host = headers.getOrDefault("Host", "localhost")
         url = convertToDubboUrl(url, host)
         return DubboRequest(url, requestType, requestBody, headers)
     }
