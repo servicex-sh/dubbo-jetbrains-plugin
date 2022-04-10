@@ -8,7 +8,7 @@ import java.net.URI
 
 
 @Suppress("UnstableApiUsage")
-class DubboRequest(override val URL: String?, override val httpMethod: String?, override val textToSend: String?, val headers: Map<String, String>?) : CommonClientRequest {
+class DubboRequest(override val URL: String?, override val httpMethod: String?, override val textToSend: String?, val headers: Map<String, String>) : CommonClientRequest {
     val dubboURI: URI
     var serviceName: String
     var serviceVersion = "0.0.0"
@@ -73,7 +73,7 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
             paramsTypeArray = arrayOf()
         }
         if (textToSend != null && textToSend.isNotEmpty()) {
-            val body = textToSend.trim();
+            val body = jsonArrayBodyWithArgsHeaders()
             if (body.startsWith("[")) {
                 val objectMapper = ObjectMapper()
                 val jsonArray = objectMapper.readValue<List<Any>>(body)
@@ -90,6 +90,30 @@ class DubboRequest(override val URL: String?, override val httpMethod: String?, 
         } else {
             arguments = arrayOf()
         }
+    }
+
+    /**
+     * merge X-Args-0 headers into json array body
+     */
+    private fun jsonArrayBodyWithArgsHeaders(): String {
+        val argsHeaders: Map<String, String> = headers.filter { it.key.toLowerCase().startsWith("x-args-") }
+            .mapKeys { it.key.lowercase() }
+        if (argsHeaders.isEmpty()) {
+            return textToSend ?: ""
+        }
+        var newBody = textToSend ?: ""
+        val contentType = headers.getOrDefault("Content-Type", "application/json")
+        if (!contentType.contains("json")) {
+            if (!newBody.startsWith('"')) {
+                newBody = "\"${newBody}\""
+            }
+        }
+        val argLines = mutableListOf<String>()
+        for (i in 0..argsHeaders.size) {
+            val key = "x-args-$i"
+            argLines.add(argsHeaders.getOrDefault(key, newBody))
+        }
+        return "[" + java.lang.String.join(",", argLines) + "]"
     }
 
 }
