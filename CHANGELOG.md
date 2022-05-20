@@ -2,6 +2,10 @@
 
 # RSocket plugin Changelog
 
+## [0.4.1]
+
+- Compatible with JetBrains IDEs 2022.*
+
 ## [0.4.0]
 
 - Fixed: add double quote for all text
@@ -11,8 +15,8 @@
 ### Dubbbo update description
 //@name updateDesc
 DUBBO 127.0.0.1:20880/GreetingsService/updateDesc(java.lang.Integer,java.lang.String)
-Content-Type: text/html
 X-Args-0: 1
+Content-Type: text/html
 
 <div>Java Developer</div>
 ```
