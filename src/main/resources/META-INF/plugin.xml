@@ -15,7 +15,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="org.jetbrains.plugins.dubbo.requests.DubboRequestManager"/>
-        <httpClient.RequestExecutionSupport implementation="org.jetbrains.plugins.dubbo.restClient.execution.DubboRequestExecutionSupport"/>
+        <httpClient.requestExecutionSupport implementation="org.jetbrains.plugins.dubbo.restClient.execution.DubboRequestExecutionSupport"/>
         <defaultLiveTemplates file="/liveTemplates/Dubbo.xml"/>
     </extensions>
 
