@@ -23,4 +23,7 @@ class DubboRequestExecutionSupport : RequestExecutionSupport<DubboRequest> {
     override fun supportedMethods(): Collection<String> {
         return listOf("DUBBO")
     }
+
+    override val needsScheme: Boolean
+        get() = false
 }
