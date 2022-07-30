@@ -29,7 +29,7 @@ class DubboUrlResolver(private val project: Project) : UrlResolver {
     }
 
     override fun resolve(request: UrlResolveRequest): Iterable<UrlTargetInfo> {
-        return listOf(RSocketUrlTargetInfo(project, request.X))
+        return listOf(RSocketUrlTargetInfo(project, request.path))
     }
 
 }

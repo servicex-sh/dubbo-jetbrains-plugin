@@ -44,7 +44,8 @@ class DubboEndpoint(val routing: String, private val element: PsiMethod) : ItemP
             OasEndpointPath(
                 routing,
                 "Dubbo Service Call",
-                listOf(OasOperation(OasHttpMethod.POST, listOf(), null, routing, "[DUBBO]", false, emptyList(), emptyList()))
+                listOf(OasOperation(OasHttpMethod.POST, listOf(), null,
+                    routing, "[DUBBO]", false, emptyList(),null, emptyList()))
             )
         )
         else -> {
