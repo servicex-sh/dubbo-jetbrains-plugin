@@ -1,6 +1,14 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# RSocket plugin Changelog
+# Dubbo plugin Changelog
+
+## [0.7.0]
+
+- Compatible with JetBrains IDE 2022.3 EAP 4
+
+## [0.6.0]
+
+- Compatible with JetBrains IDEs 2022.3
 
 ## [0.5.0]
 
