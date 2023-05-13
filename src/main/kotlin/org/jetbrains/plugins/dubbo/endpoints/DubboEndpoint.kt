@@ -9,11 +9,18 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.psi.PsiMethod
+import org.bouncycastle.asn1.eac.CertificateBody.requestType
 import org.jetbrains.plugins.dubbo.dubboIcon
 
 
 @Suppress("UnstableApiUsage")
-class DubboEndpoint(val routing: String, private val element: PsiMethod) : ItemPresentation, EndpointMethodPresentation, DataProvider {
+class DubboEndpoint(val routing: String, private val element: PsiMethod) : ItemPresentation, EndpointMethodPresentation,
+    DataProvider {
+
+    override val endpointMethodPresentation: String
+        get() = "[DUBBO]"
+    override val endpointMethods: List<String>
+        get() = listOf("DUBBO")
 
     override fun getPresentableText(): String {
         return routing
@@ -26,8 +33,6 @@ class DubboEndpoint(val routing: String, private val element: PsiMethod) : ItemP
             it.substring(0, it.lastIndexOf('.'))
         }
     }
-
-    override val endpointMethod: String = "[DUBBO]"
 
     override val endpointMethodOrder = 0
 
@@ -44,10 +49,15 @@ class DubboEndpoint(val routing: String, private val element: PsiMethod) : ItemP
             OasEndpointPath(
                 routing,
                 "Dubbo Service Call",
-                listOf(OasOperation(OasHttpMethod.POST, listOf(), null,
-                    routing, "[DUBBO]", false, emptyList(),null, emptyList()))
+                listOf(
+                    OasOperation(
+                        OasHttpMethod.POST, listOf(), null,
+                        routing, "[DUBBO]", false, emptyList(), null, emptyList()
+                    )
+                )
             )
         )
+
         else -> {
             //println("==========dataId: ${dataId}")
             null
